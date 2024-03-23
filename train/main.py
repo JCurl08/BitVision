@@ -1,7 +1,7 @@
-from train.train import Train
+from train.posepredictor import PosePredictor
 
 def main():
-    Train()
+    PosePredictor()
 
 
 if __name__ == "__main__":
