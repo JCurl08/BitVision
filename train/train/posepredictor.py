@@ -25,9 +25,12 @@ class PosePredictor:
 
         accuracy = accuracy_score(y_test, y_pred)
         print("Accuracy:", accuracy)
-        return
 
-    def save(self):
-        with open('../models/model.pkl', 'wb') as f:
-            pickle.dump(self.rf, f)
-        return
+    def save(self, model_name):
+        path = "../models/" + model_name + ".pkl"
+        try:
+            with open(path, "wb") as f:
+                pickle.dump(self.rf, f)
+        except IOError:
+            print("failed to save model")
+        print("saved model \"" + model_name + "\" successfully")
