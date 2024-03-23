@@ -67,25 +67,20 @@ opWrapper.start()
 #-------------- Our Code ----------------
 cam = cv2.VideoCapture(1)
 for i in range(1000):
-	# Process Image
-	datum = op.Datum()
-	s, im = cam.read() # captures image
-	#cv2.imshow("Test Picture", im) # displays captured image
-	#im=cv2.resize(im,(480,270), interpolation = cv2.INTER_AREA)
-	image1 = im
-	#imageToProcess = cv2.imread(args[0].image_path)
-	c+=1
-	if c==8:
-		c=0
-		datum.cvInputData = image1
-		opWrapper.emplaceAndPop([datum])     # OpenPose being applied to the frame image.
-		# Display Image
-		#print("Body keypoints: \n" + str(datum.poseKeypoints))
-		#print(datum.poseKeypoints.shape)
-		if len(datum.poseKeypoints.shape)>=2:
-			x1=0
-			x2=0
+    # Process Image
+    datum = op.Datum()
+    s, im = cam.read() # captures image
+    #cv2.imshow("Test Picture", im) # displays captured image
+    #im=cv2.resize(im,(480,270), interpolation = cv2.INTER_AREA)
+    image1 = im
+    #imageToProcess = cv2.imread(args[0].image_path)
+    c+=1
+    if c==8:
+        c=0
+        datum.cvInputData = image1
+        opWrapper.emplaceAndPop([datum])     # OpenPose being applied to the frame image.
+        # Display Image
+        #print("Body keypoints: \n" + str(datum.poseKeypoints))
+        #print(datum.poseKeypoints.shape)
 
-			cv2.imshow("OpenPose 1.4.0 - Tutorial Python API", im)
-			cv2.waitKey(1)
 
