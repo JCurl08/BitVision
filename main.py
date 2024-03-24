@@ -4,27 +4,25 @@ import cv2
 import numpy as np
 import mediapipe as mp
 
-from controller.controller import Controller
+from controller.Controller import Controller
+model_path = "./models/pose_model.pkl"
 
 
 def main():
-    predictor_file_names = {
-        "right": "test.pkl"
-    }
+
 
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
 
     # Instantiate controllers
-    controllers = []
-    for button, predictor in predictor_file_names:
-        try:
-            with open("./models/" + predictor, "rb") as f:
-                controllers.append(Controller(pickle.load(f), button))
-            print("Successfully loaded model:" + predictor)
-        except IOError:
-            print("failed to open model:" + predictor)
+
+    try:
+        with open(model_path, "rb") as f:
+            controller = Controller(pickle.load(f))
+        print("Successfully loaded model")
+    except IOError:
+        print("failed to open model")
 
     vid = cv2.VideoCapture(1)
     with mp_pose.Pose(
@@ -43,9 +41,13 @@ def main():
 
             # calculate pose
             results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-
-            for controller in controllers:
-                controller.do_action(results)
+            if results != None and results.pose_landmarks != None:
+                row = []
+                for landmark in results.pose_landmarks.landmark:
+                    row.append(landmark.x)
+                    row.append(landmark.y)
+                    row.append(landmark.z)
+                controller.do_action(row)
 
             # draw 3D pose landmarks live
             mp_drawing.draw_landmarks(
@@ -64,7 +66,6 @@ def main():
     vid.release()
     # Destroy all the windows
     cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
     main()
