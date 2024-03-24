@@ -12,10 +12,10 @@ def main():
 
     # set the control scheme
     controls = {
-        "crouch": ["down"],
-        "jump_front": ["up"],
-        "jump_left": ["up", "left"],
-        "jump_right": ["up", "right"],
+        "crouch": ["s"],
+        "jump_front": ["w"],
+        "jump_left": ["a", "w"],
+        "jump_right": ["d", "w"],
         "neutral": [],
         "pause": ["p"],
         "walk_left": ["left"],
