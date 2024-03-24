@@ -16,7 +16,8 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_holistic = mp.solutions.holistic
 
-def main():
+
+def main(action_class):
     vid = cv2.VideoCapture(1)
     data = []
     with mp_pose.Pose(
@@ -45,7 +46,6 @@ def main():
 
             print('pose landmarker result: {}'.format(results))
 
-
             # draw image
             cv2.imshow("MediaPipePose", cv2.flip(image, 1))
             if results != None and results.pose_landmarks != None:
@@ -56,8 +56,6 @@ def main():
                     row.append(landmark.z)
                 data.append(row)
 
-
-
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break
 
@@ -67,7 +65,8 @@ def main():
     data = np.array(data)
     print(data)
     print(np.shape(data))
-    # np.savetxt("../train/training_data/crouch.csv", data, delimiter=',')
+    np.savetxt("../train/training_data/" + action_class + ".csv", data, delimiter=',')
+
 
 if __name__ == "__main__":
     main()

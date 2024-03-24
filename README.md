@@ -9,7 +9,7 @@ During live recording, recorded video frames are processed against the random fo
 
 ## Video Recording and Data Generation
 1. In DataGenerator.py, set the data file output for the specific action to be recorded on line 70.
-2. In terminal, navigate to the `/predict` directory and run `python DataGenerator.py`. This will start the webcam and begin recording mediapipe data.
+2. In terminal, navigate to the `/predict` directory and run `python DataGenerator.py {action_class}`. This will start the webcam and begin recording mediapipe data for the specified action.
 3. The output data .csv file will be stored in the `/train/training_data` directory.
 
 ## Random Forest Model Training 
