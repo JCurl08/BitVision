@@ -15,7 +15,8 @@ model_path = "../models/pose_model.pkl"
 
 class ImageProcessingThread(QThread):
     # Create a signal to send the processed images to the main thread
-    update_image = pyqtSignal((np.ndarray, string))
+    update_image = pyqtSignal(np.ndarray)
+    update_controller_image = pyqtSignal(str)
 
     def run(self):
         mp_pose = mp.solutions.pose
@@ -63,7 +64,8 @@ class ImageProcessingThread(QThread):
                     mp_pose.POSE_CONNECTIONS,
                     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
-                self.update_image.emit(image, action)
+                self.update_image.emit(image)
+                self.update_controller_image.emit(str(action[0]))
 
                 if cv2.waitKey(5) & 0xFF == ord('q'):
                     break
@@ -74,26 +76,42 @@ class ImageProcessingThread(QThread):
         cv2.destroyAllWindows()
 
 
+
+controller_images = {
+    "neutral": "neutral.png",
+    "crouch": "down.png",
+    "walk_left": "left.png",
+    "walk_right": "right.png",
+    "jump_front": "jump.png",
+    "jump_left": "jump_left.png",
+    "jump_right": "jump_right.png",
+    "pause": "start.png"
+}
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        #Preprocess images
+        self.controller_pixmaps = {}
+        self.preprocessImages()
+
         # Set up the UI
         self.image_label = QLabel()
         self.controller_label = QLabel()
+
+        self.controller_label.setPixmap(self.controller_pixmaps["neutral"])
         self.start_stop_button = QPushButton("Start capture")
 
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
 
-        left_layout = QVBoxLayout()  # For the first image and the button
-        left_layout.addWidget(self.image_label)
-        # left_layout.addWidget(self.controller_label)  # Add the second image below
+        bottom_layout = QHBoxLayout()  # For the first image and the button
+        bottom_layout.addWidget(self.controller_label)  # Add the second image below
+        bottom_layout.addWidget(self.start_stop_button)
 
-        main_layout = QHBoxLayout()  # Main layout to hold everything
-        main_layout.addLayout(left_layout)  # Add the top layout
-        main_layout.addWidget(self.start_stop_button)
-
+        main_layout = QVBoxLayout()  # Main layout to hold everything
+        main_layout.addWidget(self.image_label)
+        main_layout.addLayout(bottom_layout)  # Add the top layout
 
         container = QWidget()
         container.setLayout(main_layout)
@@ -106,7 +124,15 @@ class MainWindow(QMainWindow):
         # Start the image processing thread
         self.thread = ImageProcessingThread()
         self.thread.update_image.connect(self.update_image)
+        self.thread.update_controller_image.connect(self.update_controller_image)
         self.thread.start()
+
+    def preprocessImages(self):
+        for action, filename in controller_images.items():
+            print(filename)
+            img = cv2.imread("./images/" + filename)
+            self.controller_pixmaps[action] = self.cv2_to_qpixmap(img)
+
 
     def toggle_stream(self):
         if self.is_streaming:
@@ -115,7 +141,7 @@ class MainWindow(QMainWindow):
             self.start_stop_button.setText("Stop capture")
         self.is_streaming = not self.is_streaming
 
-    @pyqtSlot((np.ndarray, string))
+    @pyqtSlot(np.ndarray)
     def update_image(self, image):
         # Update the QLabel with the new image
         resized_image = cv2.resize(image, None, fx=0.6, fy=0.6, interpolation=cv2.INTER_AREA)
@@ -126,6 +152,25 @@ class MainWindow(QMainWindow):
         qimage = QImage(cvt_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
         qpixmap = QPixmap.fromImage(qimage)
         self.image_label.setPixmap(qpixmap)
+
+    @pyqtSlot(str)
+    def update_controller_image(self, action):
+        self.controller_label.setPixmap(self.controller_pixmaps[action])
+
+    def cv2_to_qpixmap(self, cv_image):
+        # Convert BGR to RGB
+        rgb_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+        resized_image = cv2.resize(rgb_image, None, fx=0.6, fy=0.6, interpolation=cv2.INTER_AREA)
+
+        # Convert numpy array to QImage
+        height, width, channel = resized_image.shape
+        bytes_per_line = 3 * width
+        q_image = QImage(resized_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+        # Convert QImage to QPixmap
+        qpixmap = QPixmap.fromImage(q_image)
+
+        return qpixmap
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
