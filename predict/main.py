@@ -2,7 +2,7 @@ import sys
 import time
 
 import cv2
-import pandas as pd
+import numpy as np
 import mediapipe as mp
 
 model_path = '../models/pose_landmarker_heavy.task'
@@ -14,10 +14,11 @@ model_file_names = [
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
+mp_holistic = mp.solutions.holistic
 
 def main():
     vid = cv2.VideoCapture(1)
-    data = pd.DataFrame()
+    data = []
     with mp_pose.Pose(
             min_tracking_confidence=0.5,
             min_detection_confidence=0.5,
@@ -47,8 +48,14 @@ def main():
 
             # draw image
             cv2.imshow("MediaPipePose", cv2.flip(image, 1))
-            if results.pose_landmarks != None:
-                data.loc[len(data)] = __doc__(results.pose_landmarks)
+            if results != None and results.pose_landmarks != None:
+                row = []
+                for landmark in results.pose_landmarks.landmark:
+                    row.append(landmark.x)
+                    row.append(landmark.y)
+                    row.append(landmark.z)
+                data.append(row)
+
 
 
             if cv2.waitKey(5) & 0xFF == ord('q'):
@@ -57,9 +64,10 @@ def main():
     # After the loop release the cap object
     vid.release()
     # Destroy all the windows
-    cv2.destroyAllWindows()
+    data = np.array(data)
     print(data)
-
+    print(np.shape(data))
+    # np.savetxt("data/crouch.csv", data, delimiter=',')
 
 if __name__ == "__main__":
     main()
