@@ -5,7 +5,7 @@ import numpy as np
 import mediapipe as mp
 
 from controller.Controller import Controller
-model_path = "./models/pose_model.pkl"
+model_path = "./models/pose_model_5.pkl"
 
 
 def main():
