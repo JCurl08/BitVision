@@ -1,8 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
-import numpy as np
-import pandas as pd
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 import pickle
 
 
@@ -11,9 +9,8 @@ class PosePredictor:
     def __init__(self):
         self.rf = RandomForestClassifier()
 
-    def fit(self, X, y):
+    def fit(self, train_data):
         """ Function to fit the data from collect"""
-        train_data = pd.read_csv("../test_data/data.csv")  # using sample data for now
         X = train_data.drop("class", axis=1)
         y = train_data["class"]
 
