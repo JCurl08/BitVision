@@ -19,12 +19,12 @@ class Controller:
             print("Activate: " + y_hat)
 
             if y_hat == self.current_action:
-                print("Press and hold: " + " ".join(k) for k in self.control_scheme[y_hat])
+                # print("Press and hold: " + " ".join(k) for k in self.control_scheme[y_hat])
                 for key in self.control_scheme[y_hat]:
                     pyautogui.keyDown(key)
             else:
                 if self.current_action:
-                    print("Release: " + " ".join(k) for k in self.control_scheme[y_hat])
+                    # print("Release: " + " ".join(k) for k in self.control_scheme[y_hat])
                     for key in self.control_scheme[self.current_action]:
                         pyautogui.keyUp(key)
                 # print("Press: " + " ".join(k) for k in self.control_scheme[y_hat])

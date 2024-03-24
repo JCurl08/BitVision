@@ -13,6 +13,17 @@ import mediapipe as mp
 from controller.Controller import Controller
 model_path = "../models/pose_model.pkl"
 
+controls = {
+    "crouch": ["s"],
+    "jump_front": ["w"],
+    "jump_left": ["a", "w"],
+    "jump_right": ["d", "w"],
+    "neutral": [],
+    "pause": ["p"],
+    "walk_left": ["a"],
+    "walk_right": ["d"],
+}
+
 class ImageProcessingThread(QThread):
     # Create a signal to send the processed images to the main thread
     update_image = pyqtSignal(np.ndarray)
@@ -23,10 +34,12 @@ class ImageProcessingThread(QThread):
         mp_drawing = mp.solutions.drawing_utils
         mp_drawing_styles = mp.solutions.drawing_styles
 
+        i = 0
+
         # Instantiate controller
         try:
             with open(model_path, "rb") as f:
-                controller = Controller(pickle.load(f))
+                controller = Controller(pickle.load(f), controls)
             print("Successfully loaded model")
         except IOError:
             print("failed to open model")
@@ -40,6 +53,7 @@ class ImageProcessingThread(QThread):
                 smooth_landmarks=True,
         ) as pose:
             while vid.isOpened():
+                i += 1
                 # read webcam image
                 success, image = vid.read()
 
@@ -65,7 +79,10 @@ class ImageProcessingThread(QThread):
                     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
                 self.update_image.emit(image)
-                self.update_controller_image.emit(str(action[0]))
+
+                if i == 6:
+                    i = 0
+                    self.update_controller_image.emit(controller.current_action)
 
                 if cv2.waitKey(5) & 0xFF == ord('q'):
                     break
@@ -92,34 +109,37 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         #Preprocess images
+        self.channels = None
+        self.width = None
+        self.height = None
+        self.bytes_per_line = None
         self.controller_pixmaps = {}
         self.preprocessImages()
 
         # Set up the UI
         self.image_label = QLabel()
         self.controller_label = QLabel()
+        self.curr_label = "neutral"
 
         self.controller_label.setPixmap(self.controller_pixmaps["neutral"])
-        self.start_stop_button = QPushButton("Start capture")
+        # self.start_stop_button = QPushButton("Start capture")
 
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
 
-        bottom_layout = QHBoxLayout()  # For the first image and the button
-        bottom_layout.addWidget(self.controller_label)  # Add the second image below
-        bottom_layout.addWidget(self.start_stop_button)
+        # bottom_layout.addWidget(self.start_stop_button)
 
         main_layout = QVBoxLayout()  # Main layout to hold everything
         main_layout.addWidget(self.image_label)
-        main_layout.addLayout(bottom_layout)  # Add the top layout
+        main_layout.addWidget(self.controller_label)
 
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
 
         # Set up QTimer and connect the start/stop button
-        self.start_stop_button.clicked.connect(self.toggle_stream)
-        self.is_streaming = False  # To track the streaming state
+        # self.start_stop_button.clicked.connect(self.toggle_stream)
+        # self.is_streaming = False  # To track the streaming state
 
         # Start the image processing thread
         self.thread = ImageProcessingThread()
@@ -129,33 +149,34 @@ class MainWindow(QMainWindow):
 
     def preprocessImages(self):
         for action, filename in controller_images.items():
-            print(filename)
             img = cv2.imread("./images/" + filename)
             self.controller_pixmaps[action] = self.cv2_to_qpixmap(img)
 
 
-    def toggle_stream(self):
-        if self.is_streaming:
-            self.start_stop_button.setText("Start capture")
-        else:
-            self.start_stop_button.setText("Stop capture")
-        self.is_streaming = not self.is_streaming
+    # def toggle_stream(self):
+    #     if self.is_streaming:
+    #         self.start_stop_button.setText("Start capture")
+    #     else:
+    #         self.start_stop_button.setText("Stop capture")
+    #     self.is_streaming = not self.is_streaming
 
     @pyqtSlot(np.ndarray)
     def update_image(self, image):
         # Update the QLabel with the new image
-        resized_image = cv2.resize(image, None, fx=0.6, fy=0.6, interpolation=cv2.INTER_AREA)
-        height, width, channels = resized_image.shape
-        bytes_per_line = channels * width
-        flipped_image = cv2.flip(resized_image, 1)
+        if not self.height:
+            self.height, self.width, self.channels = image.shape
+            self.bytes_per_line = 3 * self.width
+        flipped_image = cv2.flip(image, 1)
         cvt_image = cv2.cvtColor(flipped_image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
-        qimage = QImage(cvt_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        qimage = QImage(cvt_image.data, self.width, self.height, self.bytes_per_line, QImage.Format_RGB888)
         qpixmap = QPixmap.fromImage(qimage)
         self.image_label.setPixmap(qpixmap)
 
     @pyqtSlot(str)
     def update_controller_image(self, action):
-        self.controller_label.setPixmap(self.controller_pixmaps[action])
+        if self.curr_label != action:
+            self.controller_label.setPixmap(self.controller_pixmaps[action])
+            self.curr_label = action
 
     def cv2_to_qpixmap(self, cv_image):
         # Convert BGR to RGB
