@@ -3,7 +3,6 @@ import time
 
 import cv2
 import numpy as np
-from predict.Predictor import Predictor
 import mediapipe as mp
 
 model_path = '../models/pose_landmarker_heavy.task'
