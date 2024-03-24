@@ -15,5 +15,5 @@ class Controller:
         """
         y_hat = self.predictor.predict(np.reshape(data, (1, -1)))
         if y_hat:
-            print("Activate: " + y_hat)
-            pyautogui.press(self.control_scheme[y_hat])
+            print("Activate: " + y_hat[0])
+            pyautogui.press(self.control_scheme[y_hat[0]])
