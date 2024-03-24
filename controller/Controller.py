@@ -6,7 +6,7 @@ class Controller:
     def __init__(self, predictor):
         self.predictor = predictor
 
-    def do_action(self, data) -> None:
+    def do_action(self, data):
         """
         :param data:
         :return: None
@@ -15,4 +15,5 @@ class Controller:
         y_hat = self.predictor.predict(np.reshape(data, (1, -1)))
         if y_hat:
             print("Activate: " + y_hat)
-            # pyautogui.press(self.button)
+            return y_hat
+            # pyautogui.press('w')

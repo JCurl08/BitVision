@@ -9,14 +9,11 @@ model_path = "./models/pose_model.pkl"
 
 
 def main():
-
-
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
 
     # Instantiate controllers
-
     try:
         with open(model_path, "rb") as f:
             controller = Controller(pickle.load(f))
