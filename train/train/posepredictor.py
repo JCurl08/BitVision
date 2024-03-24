@@ -10,7 +10,9 @@ class PosePredictor:
         self.rf = RandomForestClassifier()
 
     def fit(self, train_data):
-        """ Function to fit the data from collect"""
+        """
+        Function to fit the data from collect
+        """
         X = train_data.drop("class", axis=1)
         y = train_data["class"]
 
