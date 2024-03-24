@@ -4,7 +4,6 @@ import glob
 
 def preprocess_training_data(data, label):
     data["class"] = label
-    print(data[0:5])
     return data
 
 def preprocess_all():
@@ -25,10 +24,11 @@ def preprocess_all():
 
 def main():
     preprocess_all()
-    # pp = PosePredictor()
-    # pp.fit(train_data)
-    # pp.save("test")
 
+    train_data = pd.read_csv("./training_data/training_data_all.csv")
+    pp = PosePredictor()
+    pp.fit(train_data)
+    pp.save("pose_model")
 
 if __name__ == "__main__":
     main()
