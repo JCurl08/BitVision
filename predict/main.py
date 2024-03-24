@@ -2,7 +2,7 @@ import sys
 import time
 
 import cv2
-import numpy as np
+import pandas as pd
 import mediapipe as mp
 
 model_path = '../models/pose_landmarker_heavy.task'
@@ -14,8 +14,10 @@ model_file_names = [
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
+
 def main():
     vid = cv2.VideoCapture(1)
+    data = pd.DataFrame()
     with mp_pose.Pose(
             min_tracking_confidence=0.5,
             min_detection_confidence=0.5,
@@ -42,8 +44,12 @@ def main():
 
             print('pose landmarker result: {}'.format(results.pose_landmarks))
 
+
             # draw image
             cv2.imshow("MediaPipePose", cv2.flip(image, 1))
+            if results.pose_landmarks != None:
+                data.loc[len(data)] = __doc__(results.pose_landmarks)
+
 
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break
@@ -52,6 +58,7 @@ def main():
     vid.release()
     # Destroy all the windows
     cv2.destroyAllWindows()
+    print(data)
 
 
 if __name__ == "__main__":
