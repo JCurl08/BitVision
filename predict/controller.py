@@ -7,5 +7,11 @@ class Controller:
         self.predictor = predictor
         self.button = button
 
-    def do_press(self):
-        pyautogui.press(self.button)
+    def do_action(self, data):
+        """
+        :param data:
+        :return: None
+        if data matches the action it's predictor is looking for, performs key press on this controller's key
+        """
+        if self.predictor.predict(data):
+            pyautogui.press(self.button)
