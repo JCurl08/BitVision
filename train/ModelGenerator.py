@@ -22,13 +22,13 @@ def preprocess_all():
     training_data_all = pd.concat(frames)
     training_data_all.to_csv("./training_data/training_data_all.csv", index=False)
 
-def main():
+def main(model_name):
     preprocess_all()
 
     train_data = pd.read_csv("./training_data/training_data_all.csv")
     pp = PosePredictor()
     pp.fit(train_data)
-    pp.save("pose_model")
+    pp.save(model_name)
 
 if __name__ == "__main__":
     main()

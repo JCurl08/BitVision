@@ -14,8 +14,8 @@ During live recording, recorded video frames are processed against the random fo
 
 ## Random Forest Model Training 
 1. Go to the `/train` directory.
-2. Run `python ModelGenerator.py`. This will append the action (training data file name) as the class type for the associated data and then concatenate all training data into one file.
-3. The trained model will be saved to `/models` as a pickled model, `pose_model.pkl`.
+2. Run `python ModelGenerator.py {model_name}`. This will append the action (training data file name) as the class type for the associated data and then concatenate all training data into one file.
+3. The trained model will be saved to `/models` as a pickled model, `{model_name}.pkl`.
 
 ## Live Video Capture and Keyboard Input Generation
 1. Go to the project root directory.
