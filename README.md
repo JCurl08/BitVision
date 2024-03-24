@@ -11,8 +11,9 @@ https://github.com/JCurl08/BitVision/assets/60952417/a963fa12-6f1d-4d5c-b083-dc1
 
 
 ## Project Setup
-1. Setup virtual environment and install dependencies according to `INSTALLATIONS.md`.
-2. Install Mediapipe. Follow instructions at https://developers.google.com/mediapipe/solutions/setup_python.
+1. Clone this repository.
+2. Setup virtual environment and install dependencies according to `INSTALLATIONS.md`.
+3. Install Mediapipe. Follow instructions at https://developers.google.com/mediapipe/solutions/setup_python.
 
 ## Video Recording and Data Generation
 1. In DataGenerator.py, set the data file output for the specific action to be recorded on line 70.
