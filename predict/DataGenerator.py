@@ -67,7 +67,7 @@ def main():
     data = np.array(data)
     print(data)
     print(np.shape(data))
-    # np.savetxt("data/crouch.csv", data, delimiter=',')
+    # np.savetxt("../train/training_data/crouch.csv", data, delimiter=',')
 
 if __name__ == "__main__":
     main()
