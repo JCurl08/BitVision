@@ -9,6 +9,18 @@ model_path = "./models/pose_model.pkl"
 
 
 def main():
+    # set the control scheme
+    controls = {
+        "crouch": ["s"],
+        "jump_front": ["w"],
+        "jump_left": ["a", "w"],
+        "jump_right": ["d", "w"],
+        "neutral": [],
+        "pause": ["p"],
+        "walk_left": ["a"],
+        "walk_right": ["d"],
+    }
+
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
@@ -16,7 +28,7 @@ def main():
     # Instantiate controllers
     try:
         with open(model_path, "rb") as f:
-            controller = Controller(pickle.load(f))
+            controller = Controller(pickle.load(f), controls)
         print("Successfully loaded model")
     except IOError:
         print("failed to open model")
