@@ -44,14 +44,15 @@ def main():
             # calculate pose
             results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
+            for controller in controllers:
+                controller.do_action(results)
+
             # draw 3D pose landmarks live
             mp_drawing.draw_landmarks(
                 image,
                 results.pose_landmarks,
                 mp_pose.POSE_CONNECTIONS,
                 landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-
-            print('pose landmarker result: {}'.format(results))
 
             # draw image
             cv2.imshow("MediaPipePose", cv2.flip(image, 1))

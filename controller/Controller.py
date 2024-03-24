@@ -14,4 +14,5 @@ class Controller:
         if data matches the action it's predictor is looking for, performs key press on this controller's key
         """
         if self.predictor.predict(data):
+            print("Activate: " + self.button)
             pyautogui.press(self.button)
