@@ -17,7 +17,8 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_holistic = mp.solutions.holistic
 
 
-def main(action_class):
+def main():
+    args = sys.argv[1:]
     vid = cv2.VideoCapture(1)
     data = []
     with mp_pose.Pose(
@@ -65,7 +66,7 @@ def main(action_class):
     data = np.array(data)
     print(data)
     print(np.shape(data))
-    np.savetxt("../train/training_data/" + action_class + ".csv", data, delimiter=',')
+    np.savetxt("../train/training_data/" + args[0] + ".csv", data, delimiter=',')
 
 
 if __name__ == "__main__":
