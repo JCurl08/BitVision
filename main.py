@@ -1,20 +1,31 @@
-import sys
-import time
+import pickle
 
 import cv2
 import numpy as np
 import mediapipe as mp
 
-model_path = '../models/pose_landmarker_heavy.task'
+from controller.controller import Controller
 
-model_file_names = [
-    "test.pkl"
-]
 
-mp_pose = mp.solutions.pose
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
 def main():
+    predictor_file_names = {
+        "right": "test.pkl"
+    }
+
+    mp_pose = mp.solutions.pose
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+
+    # Instantiate controllers
+    controllers = []
+    for button, predictor in predictor_file_names:
+        try:
+            with open("./models/" + predictor, "rb") as f:
+                controllers.append(Controller(pickle.load(f), button))
+            print("Successfully loaded model:" + predictor)
+        except IOError:
+            print("failed to open model:" + predictor)
+
     vid = cv2.VideoCapture(1)
     with mp_pose.Pose(
             min_tracking_confidence=0.5,
