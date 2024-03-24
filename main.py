@@ -18,8 +18,8 @@ def main():
         "jump_right": ["d", "w"],
         "neutral": [],
         "pause": ["p"],
-        "walk_left": ["left"],
-        "walk_right": ["right"]
+        "walk_left": ["a"],
+        "walk_right": ["d"],
     }
 
 
