@@ -166,3 +166,4 @@ cython_debug/
 .idea/BitVision.iml
 .idea/misc.xml
 .idea/misc.xml
+.python-version
