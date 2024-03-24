@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -13,8 +14,9 @@ class PosePredictor:
         """
         Function to fit the data from collect
         """
-        X = train_data.drop("class", axis=1)
-        y = train_data["class"]
+        X = train_data.drop("class", axis=1).to_numpy()
+        y = train_data["class"].to_numpy()
+
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
