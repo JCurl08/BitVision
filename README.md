@@ -1,7 +1,14 @@
 # BitVision
 
 BitVision is a Python-based computer vision app that allows users to record actions (3D poses) on video using Mediapipe and map them to keyboard inputs. Training data is associated with actions using random forest classification. 
-During live recording, recorded video frames are processed against the random forest model, generating a set of key presses to perform according to the action being performed.
+During live recording, recorded video frames are processed against the random forest model, generating a set of key presses to perform according to the action being performed
+
+## Demo
+
+
+https://github.com/JCurl08/BitVision/assets/60952417/a963fa12-6f1d-4d5c-b083-dc1cfaac7b06
+
+
 
 ## Project Setup
 1. Setup virtual environment and install dependencies according to `INSTALLATIONS.md`.
